@@ -24,7 +24,8 @@ type Root {
 type Query {
   myQuery(
   access_key: String
-  countries: String
+  categories: String
+  keywords: String
   ): Root
     @rest(endpoint: "http://api.mediastack.com/v1/news")
 }

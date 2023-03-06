@@ -1,5 +1,6 @@
 import { gql } from "graphql-request"
 import { categories } from "../constants";
+import sortByNewsImage from "./sortByNewsImage";
 
 const fetchNews= async (category?: Category | string,
     keywords?: string,
@@ -7,8 +8,8 @@ const fetchNews= async (category?: Category | string,
     ) => {
         const query=gql`
         query MyQuery(
-            $access_key: String, 
-            $categories: String,
+            $access_key: String!, 
+            $categories: String!,
             $keywords: String
         ){
             myQuery(access_key: $access_key, categories: $categories, keywords: $keywords, countries: "us,in") {
@@ -45,7 +46,7 @@ const fetchNews= async (category?: Category | string,
             body: JSON.stringify({
                 query,
                 variables:{
-                    $access_key: process.env.MEDIASTACK_API_KEY, 
+                    $access_key: "3c1315ae06d10d17f6c6d0ad6097abbb", 
                     $categories: category,
                     $keywords: keywords
                 }
@@ -54,9 +55,11 @@ const fetchNews= async (category?: Category | string,
           });
           console.log("load", category, keywords);
 
-          const newsResponse= await res.json();
+          const newsResponse= await res.json(); //converting response to json
 
-          const newsWithImage= newsResponse.data.filter((item: DataEntry)=> item.image!==null)
+          const news= sortByNewsImage(newsResponse.data.myQuery)
+
+          return news;
 }
 
 export default fetchNews;
